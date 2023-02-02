@@ -36,10 +36,19 @@ double GetWtime() {
 // Returns histogram of positions xx in range [xmin,xmax] with nb bins
 std::vector<double> GetHistogram(const std::vector<double>& xx) {
   std::vector<double> hh(nb, 0);
-  for (size_t i = 0; i < xx.size(); ++i) {
-    int j = (xx[i] - xmin) / (xmax - xmin) * nb;
-    j = std::max(0, std::min(int(nb) - 1, j));
-    hh[j] += 1;
+  #pragma omp parallel
+  {
+  std::vector<double> hhloc(nb, 0);
+    #pragma omp for
+    for (size_t i = 0; i < xx.size(); ++i) {
+      int j = (xx[i] - xmin) / (xmax - xmin) * nb;
+      j = std::max(0, std::min(int(nb) - 1, j));
+      hhloc[j] += 1;
+      #pragma omp critical
+      {
+        hh[j]=hhloc[j];
+      }
+    }
   }
   return hh;
 }
