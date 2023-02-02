@@ -90,12 +90,10 @@ int main(int argc, char *argv[]) {
     for (size_t m = 0; m < M; ++m) {
       for (size_t i = 0; i < N; ++i) {
         xxloc[i] += dis(genloc);
-      }
-    }
-    #pragma omp critical{
-    for(size_t i = 0; i < N; ++i) {
-        xx[i] += xxloc[i];
+        #pragma omp critical{
+          xx[i] += xxloc[i];
         }
+      }
     }
   }
 
