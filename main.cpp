@@ -78,9 +78,15 @@ int main(int argc, char *argv[]) {
   // Perform M steps of random walks and measure time
   // TODO 2: parallelize with OpenMP
   wt0 = GetWtime();
-  {
+  { 
+    #pragma omp parallel
+
+
+    std::normal_distribution<double> dis(0., std::sqrt(dt));
+    std::default_random_engine genloc(omp_get_thread_num());
+    
+    #pragma omp for collapse(2) reduction(+:xx)
     for (size_t m = 0; m < M; ++m) {
-      std::normal_distribution<double> dis(0., std::sqrt(dt));
       for (size_t i = 0; i < N; ++i) {
         xx[i] += dis(gen);
       }
