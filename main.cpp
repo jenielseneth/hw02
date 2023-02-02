@@ -7,6 +7,8 @@
 // TODO 1: add OpenMP headers
 #include <omp.h>
 
+#define n 24
+
 // evolution time
 double tmax = 0.2;
 // number of bins in histogram
@@ -36,7 +38,7 @@ double GetWtime() {
 // Returns histogram of positions xx in range [xmin,xmax] with nb bins
 std::vector<double> GetHistogram(const std::vector<double>& xx) {
   std::vector<double> hh(nb, 0);
-  #pragma omp parallel
+  #pragma omp parallel num_threads(n)
   {
   std::vector<double> hhloc(nb, 0);
     #pragma omp for
@@ -88,7 +90,7 @@ int main(int argc, char *argv[]) {
   // TODO 2: parallelize with OpenMP
   wt0 = GetWtime();
 
-  #pragma omp parallel
+  #pragma omp parallel num_threads(n)
   { 
     std::normal_distribution<double> dis(0., std::sqrt(dt));
     std::default_random_engine genloc(omp_get_thread_num());
